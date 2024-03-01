@@ -1,4 +1,4 @@
-import Demo from "./components/Demo";
+import Demo from "@/components/Demo";
 
 export const adminurl="http://localhost:3001"
 

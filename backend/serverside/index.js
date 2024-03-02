@@ -20,10 +20,10 @@ app.get("/api/users",async(req,res) => {
     res.json({data})
    } catch (error) {
     console.log(error);
-   }
+   } 
 })
 
-app.get("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
   console.log("CALLED THE POST API");
   // const loggedid = generateRandomNumber();

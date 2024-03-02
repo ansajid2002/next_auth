@@ -20,6 +20,7 @@ session: {
       },
       async authorize(credentials,req) {
         console.log(credentials,"credentialscredentials");
+        console.log(req.body,"req.body");
         const { email, password } = req.body;
 
                 const requestBody = {
@@ -35,6 +36,10 @@ session: {
           },
           body: JSON.stringify(requestBody),
         });
+        console.log("CALLED THE POST API-=-=-=-=-=-=",resp);
+        if (!resp.ok){
+          throw new Error("error in response from backend")
+        }
         const user = await resp.json();
         console.log("USER",user);
         if (user.is_success) {
@@ -70,4 +75,5 @@ callbacks: {
   },
 };
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

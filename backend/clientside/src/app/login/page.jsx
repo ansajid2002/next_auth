@@ -5,7 +5,6 @@ import { signIn } from 'next-auth/react';
 const page = () => {
 
     const onFinish = async (values) => {
-        console.log('Received values:', values);
       
         try {
           const response = await signIn('credentials', {
@@ -15,7 +14,7 @@ const page = () => {
             callbackUrl: '/',
           });
       
-          console.log('signIn response:', response);
+          console.log('response from route.jsx:', response);
           // You can add your logic based on the signIn response here
         } catch (error) {
           console.error('Error signing in:', error);
@@ -45,7 +44,7 @@ const page = () => {
             </Form.Item>
     
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="" htmlType="submit">
                 Login
               </Button>
             </Form.Item>

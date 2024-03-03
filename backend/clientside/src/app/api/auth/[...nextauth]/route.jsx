@@ -20,7 +20,8 @@ session: {
       },
       async authorize(credentials,req) {
         console.log(credentials,"credentialscredentials");
-        console.log(req.body,"req.body");
+        console.log(req.body,"ewrwerwr");
+      
         const { email, password } = req.body;
 
                 const requestBody = {
@@ -36,42 +37,33 @@ session: {
           },
           body: JSON.stringify(requestBody),
         });
-        console.log("CALLED THE POST API-=-=-=-=-=-=",resp);
-        if (!resp.ok){
-          throw new Error("error in response from backend")
-        }
-        const user = await resp.json();
-        console.log("USER",user);
-        if (user.is_success) {
-          console.log("nextauth daki user: " + user.is_success);
-
-          return user;
-        } else {
-          console.log("check your credentials");
-          return null;
-        }
+        // console.log("CALLED THE POST API-=-=-=-=-=-=",resp.ok);
+        const data = await resp.json()
+        return data
+        
       },
     }),
   ],
 callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.email = user.data.auth.email;
-        token.username = user.data.auth.userName;
-        token.user_type = user.data.auth.userType;
-        token.accessToken = user.data.auth.token;
-      }
+  jwt: async ({ token, user }) => {
+    console.log(user,"from JWTJWTJWTJWTJWTJWTJWTJWTJWTJWTJ");
+    if (user && user.status === 200) {
+      token.email = user.data.email;
+      // token.username = user.data.auth.userName;
+      // token.user_type = user.data.auth.userType;
+      // token.accessToken = user.data.auth.token;
+    }
 
-      return token;
-    },
-    session: ({ session, token, user }) => {
-      if (token) {
-        session.user.email = token.email;
-        session.user.username = token.userName;
-        session.user.accessToken = token.accessToken;
-      }
-      return session;
-    },
+    return token;
+  },
+  session: ({ session, token }) => {
+    if (token) {
+      session.user.email = token.email;
+      session.user.username = token.userName;
+      session.user.accessToken = token.accessToken;
+    }
+    return session;
+  },
   },
 };
 

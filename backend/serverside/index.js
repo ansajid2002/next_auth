@@ -25,7 +25,7 @@ app.get("/api/users",async(req,res) => {
 
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("CALLED THE POST API",req.body);
+
   // const loggedid = generateRandomNumber();
   try {
 
@@ -35,6 +35,7 @@ app.post("/api/auth/login", async (req, res) => {
         const result = await pool.query(`SELECT * FROM users WHERE email = $1 and password = $2`,[email,password])
         if (result.rows.length > 0 ){
           console.log(result.rows[0]);
+          console.log({ status: 200,data:result.rows[0]});
           res.status(200).json({ status: 200,data:result.rows[0]})
 
         }

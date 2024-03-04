@@ -2,18 +2,19 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 const page = () => {
-
+  const router = useRouter()
     const onFinish = async (values) => {
       
         try {
           const response = await signIn('credentials', {
             email: values.username,
             password: values.password,
-            redirect: false,
-            callbackUrl: '/',
-          });
-      
+            redirect: false,});
+            if (response.ok){
+              router.push("/")
+            }
           console.log('response from route.jsx:', response);
           // You can add your logic based on the signIn response here
         } catch (error) {

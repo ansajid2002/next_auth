@@ -76,6 +76,7 @@ export const authOptions = {
   },
   pages: {
     signIn: '/', // Redirect to home page after successful login
+    signOut:'/'
   },
 };
 

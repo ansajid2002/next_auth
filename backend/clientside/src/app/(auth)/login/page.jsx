@@ -3,6 +3,8 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
+
 const page = () => {
   const router = useRouter()
     const onFinish = async (values) => {
@@ -12,10 +14,26 @@ const page = () => {
             email: values.username,
             password: values.password,
             redirect: false,});
+
             if (response.ok){
-              router.push("/")
+              Swal.fire({
+                icon: 'success',
+                title: 'Login Successfull',
+                text: response.error,
+              }).then(() =>router.push("/") )
+              
+              // location.reload()
             }
-          console.log('response from route.jsx:', response);
+            else {
+
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: response.error,
+              });
+              
+              console.log('response from route.jsxjiijio:', response);
+            }
           // You can add your logic based on the signIn response here
         } catch (error) {
           console.error('Error signing in:', error);
@@ -50,6 +68,7 @@ const page = () => {
               </Button>
             </Form.Item>
           </Form>
+          <button onClick={() => signIn("google")} >LOGIN WITH GOOGLE </button>
         </div>
       );
 }

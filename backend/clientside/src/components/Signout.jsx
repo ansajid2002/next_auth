@@ -14,7 +14,9 @@ const Signout = () => {
     // Perform sign out action her
     await signOut({ redirect: false }); // sign out without redirecting
     router.push('/');
-    setVisible(false) // redirect to the login page
+
+    // location.reload()
+      setVisible(false) // redirect to the login page
   };
   const handleCancel = () => {
     setVisible(false);

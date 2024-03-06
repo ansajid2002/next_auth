@@ -1,6 +1,7 @@
 import { adminurl } from "@/app/page";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
   secret: 'SahiHaiDost',
@@ -47,12 +48,54 @@ export const authOptions = {
           return  { ...user.data,name:user}
 
         }
-        return null
+      
+        else {
+          console.log(user,"user ress");
+          // return user
+          throw new Error(user.message);
+        }
 
       },
     }),
+    GoogleProvider({
+      clientId:"216641462687-o228gdks8ucroh05mi1m76nrot0ivm80.apps.googleusercontent.com",
+      clientSecret: "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",
+      authorization:
+      'https://accounts.google.com/o/oauth2/v2/auth?' +
+      new URLSearchParams({
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code'
+      })
+    })
   ],
   callbacks: {
+    // async signIn({ account, profile }) {
+    //   if (account.provider === "google") {
+    //     return profile.email_verified && profile.email.endsWith("@example.com")
+    //   }
+    //   return true // Do different verification for other providers that don't have `email_verified`
+    // },
+    async session({ session, token }) {
+      if (token && token.sub) {
+        console.log(token,"google token");
+          const response = await fetch(`${adminurl}/api/getGoogleuserByid`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ id: token.sub, email: token.email, given_name: token.name, picture: token.picture }),
+          });
+          const data = await response.json();
+          console.log(data,"data in callback");
+
+          const user = { user: { name: data } };
+          return user
+      }
+
+      return session
+  },
+
     // jwt: async ({ token, user }) => {
     //   // console.log(user,"from JWTJWTJWTJWTJWTJWTJWTJWTJWTJWTJ");
     //   if (user && user.status === 200) {

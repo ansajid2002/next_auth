@@ -40,11 +40,11 @@ app.post("/api/auth/login", async (req, res) => {
 
         }
         else {
-          res.status(400).json({ status: 400,data:[{message:"Wrong password"}]})
+          res.status(401).json({ status: 401,message:"Wrong password"})
         }
     }
     else {
-      res.status(400).json({ status: 400,data:[{ message: "Email doesn't Exist"}]});
+      res.status(404).json({ status: 404, message: "Email doesn't Exist"});
     }
 
     
@@ -53,6 +53,97 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal server error" });
   }
 });
+
+app.post("/api/getGoogleuserByid", async (req, res) => {
+  try {
+    const { id, email, given_name, picture } = req.body;
+    console.log(req.body,"req.bodyreq.bodyreq.body")
+   
+    // Check if the user with the given Google ID exists
+    const checkQuery = "SELECT * FROM customers WHERE google_id = $1";
+    const checkValues = [id];
+    const checkResult = await pool.query(checkQuery, checkValues);
+
+    if (checkResult.rows.length === 0) {
+      // If the user does not exist, create a new record
+      const query = "SELECT * FROM customers WHERE email = $1"
+      const value = [email]
+      const userdata = await pool.query(query, value)
+      if (userdata?.rows?.length > 0) {
+        return res.status(200).json({ status: 200, customerData: userdata?.rows[0] });
+      }
+
+      const newCustomer = {
+        // Extract customer details from the request body
+        given_name: given_name || "",
+        family_name: "",
+        email: email || "",
+        password: "",
+        phone_number: "",
+        address_line_1: "",
+        address_line_2: "",
+        city: "",
+        state: "",
+        zip_code: "",
+        country: "",
+        bio: "",
+        status: 3,
+        google_id: id,
+        picture: picture
+      };
+
+      const insertCustomerQuery = `
+          INSERT INTO customers
+          (given_name, family_name, email, 
+            phone_number, address_line_1, address_line_2, 
+            city, state, zip_code, country, bio, status, password, verification_code, 
+            verification_expire_date, google_id, picture, verified_with)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+          RETURNING *;
+        `;
+
+      const insertCustomerValues = [
+        newCustomer.given_name,
+        newCustomer.family_name,
+        newCustomer.email,
+        newCustomer.phone_number,
+        newCustomer.address_line_1,
+        newCustomer.address_line_2,
+        newCustomer.city,
+        newCustomer.state,
+        newCustomer.zip_code,
+        newCustomer.country,
+        newCustomer.bio,
+        newCustomer.status,
+        '', // Store the hashed password
+        null,
+        null,
+        newCustomer.google_id,
+        newCustomer.picture,
+        '{Google}'
+      ];
+
+      const { rows } = await pool.query(
+        insertCustomerQuery,
+        insertCustomerValues
+      );
+
+      const insertedCustomerData = rows[0];
+
+      if (insertedCustomerData) {
+        return res.status(200).json({ status: 200, customerData: insertedCustomerData });
+      }
+    } else {
+      res.status(200).json({ customerData: checkResult.rows[0] });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
 
 app.listen(3001, () => {
     console.log("Sever is now listening at port 3001");

@@ -28,7 +28,7 @@ console.log(session ,"FROM HOME PAGE");
   return (
     <div>
       <h1 className="text-white">{responseData?.data[0]?.first_name} {responseData?.data[0]?.last_name}</h1>
-    <h1>{session?.user.email}</h1>
+    <h1 className="text-3xl text-center my-10"> welcome  {session?.user.email}</h1>
     <h1>{session?.user.username} </h1>
     <h1>{session?.user.accessToken}</h1>
 

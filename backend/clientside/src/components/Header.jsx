@@ -15,6 +15,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import Signout from './Signout';
+import { useSession } from 'next-auth/react';
 
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -32,9 +33,12 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const Header = ({session}) => {
+const Header = () => {
+
+  const {data:session,status} = useSession()
+  console.log(session,status,"ddata");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-console.log(session,"session from new header");
+
   return (
     <header className="bg-amber-50 shadow-md">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-2 lg:px-8" aria-label="Global">
